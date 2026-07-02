@@ -29,10 +29,12 @@ RaeburnAI is an open enterprise AI platform for business automation, governance,
 - Scenario engine for capacity loss, workflow volume changes and automation savings.
 - Workflow cost ranking and bottleneck analysis.
 - Document registration API for policies, org charts, KPI reports and process notes.
+- Optional bearer-token auth and RBAC for API routes.
 - Human approval guard for high-impact scenarios.
 - Structured JSON logging and audit events.
 - Input validation with bounded schemas.
 - In-memory rate limiting for API routes.
+- JSON demo storage plus Postgres/Supabase HTTP adapter path.
 - Health check endpoint.
 - Demo data for a recruitment consultancy.
 - Next.js dashboard UI.
@@ -41,9 +43,9 @@ RaeburnAI is an open enterprise AI platform for business automation, governance,
 
 ## Architecture
 
-Next.js App Router provides the dashboard and API routes. The domain core contains the BusinessTwin model, workflow cost calculations and scenario engine. Operational controls include validation, rate limiting, audit logging and approval checks. Storage currently uses a JSON development adapter and is ready for Postgres or Supabase.
+Next.js App Router provides the dashboard and API routes. The domain core contains the BusinessTwin model, workflow cost calculations and scenario engine. Operational controls include validation, auth/RBAC, rate limiting, audit logging and approval checks. Storage supports JSON for local demos and a Postgres/Supabase-style HTTP adapter for production deployments.
 
-See `docs/ARCHITECTURE.md` for more detail.
+See `docs/ARCHITECTURE.md` and `docs/DEPLOYMENT.md` for more detail.
 
 ## Quick start
 
@@ -77,22 +79,28 @@ docker compose up --build
 | --- | --- | --- |
 | `NODE_ENV` | Runtime mode. | `development` |
 | `NEXT_PUBLIC_APP_URL` | Public app URL. | `http://localhost:3000` |
-| `RAEBURN_STORAGE_DRIVER` | Storage backend. | `json` |
+| `RAEBURN_AUTH_ENABLED` | Enables bearer-token API auth. | `false` |
+| `RAEBURN_API_TOKEN` | API bearer token when auth is enabled. | empty |
+| `RAEBURN_STORAGE_DRIVER` | Storage backend: `json`, `postgres`, or `supabase`. | `json` |
 | `RAEBURN_DATA_DIR` | Local data directory. | `.data` |
+| `RAEBURN_DATABASE_HTTP_URL` | HTTP database adapter endpoint. | empty |
+| `RAEBURN_DATABASE_SERVICE_TOKEN` | Service token for database adapter. | empty |
 | `RAEBURN_RATE_LIMIT_WINDOW_MS` | API rate-limit window. | `60000` |
 | `RAEBURN_RATE_LIMIT_MAX` | Max requests per window. | `120` |
 | `RAEBURN_LOG_LEVEL` | Logging level. | `info` |
 | `RAEBURN_REQUIRE_APPROVAL` | Require human approval for guarded scenarios. | `true` |
 | `OPENAI_API_KEY` | Optional future LLM enrichment. | empty |
-| `DATABASE_URL` | Optional future database backend. | empty |
+| `DATABASE_URL` | Optional direct database URL for future adapters. | empty |
 
 ## Usage examples
 
-Create a twin with `POST /api/twins` and run approved scenarios with `POST /api/twins/demo-twin/scenarios`. See `openapi.yaml` for request shapes.
+Create a twin with `POST /api/twins` and run approved scenarios with `POST /api/twins/demo-twin/scenarios`. When auth is enabled, include `Authorization: Bearer <token>` and `X-Raeburn-Role` headers. See `openapi.yaml` for request shapes.
 
 ## Security model
 
 - No secrets are committed to the repository.
+- API auth can be enabled with `RAEBURN_AUTH_ENABLED=true`.
+- RBAC roles: `viewer`, `analyst`, `admin`, `owner`.
 - API inputs are validated with Zod and bounded to safe lengths and ranges.
 - API routes use rate limiting to reduce abuse risk.
 - Sensitive actions emit audit events.
@@ -102,7 +110,7 @@ Create a twin with `POST /api/twins` and run approved scenarios with `POST /api/
 
 ## Production readiness
 
-Included: pinned dependencies, real linting, formatting, type checking, tests, Docker, health checks, OpenAPI, safe errors, structured logs, audit events and deployment notes. Known TODOs are tracked in `ROADMAP.md` and `docs/DEPLOYMENT.md`.
+Included: pinned dependencies, real linting, formatting, type checking, tests, Docker, health checks, OpenAPI, safe errors, structured logs, audit events, Dependabot, CodeQL, auth/RBAC, database adapter path and deployment notes. UI capture requirements are documented in `docs/DEPLOYMENT.md`.
 
 ## Roadmap
 
