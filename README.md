@@ -102,7 +102,7 @@ Create a twin with `POST /api/twins` and run approved scenarios with `POST /api/
 
 ## Production readiness
 
-Included: pinned dependencies, real linting, formatting, type checking, tests, Docker, health checks, OpenAPI, safe errors, structured logs, audit events and deployment notes. Known TODOs are tracked in `ROADMAP.md` and `docs/PRODUCTION.md`.
+Included: pinned dependencies, real linting, formatting, type checking, tests, Docker, health checks, OpenAPI, safe errors, structured logs, audit events and deployment notes. Known TODOs are tracked in `ROADMAP.md` and `docs/DEPLOYMENT.md`.
 
 ## Roadmap
 
