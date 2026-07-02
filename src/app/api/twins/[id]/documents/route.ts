@@ -21,10 +21,14 @@ export async function POST(request: Request, context: Params) {
     if (forbidden) return forbidden;
 
     const rate = checkRateLimit(getClientKey(request));
-    if (!rate.allowed) return fail('Too many requests', 429, { retryAfterSeconds: rate.retryAfterSeconds });
+    if (!rate.allowed) {
+      return fail('Too many requests', 429, { retryAfterSeconds: rate.retryAfterSeconds });
+    }
+
     const params = await context.params;
     const twin = await getTwin(params.id);
     if (!twin) return fail('Twin not found', 404);
+
     const input = await parseJson(request, Input);
     const document = {
       id: crypto.randomUUID(),
@@ -34,6 +38,7 @@ export async function POST(request: Request, context: Params) {
     };
     const updated = await saveTwin({ ...twin, sourceDocuments: [...twin.sourceDocuments, document] });
     audit('document.register', twin.id, { documentId: document.id, kind: document.kind });
+
     return ok({ twin: updated, extracted: { note: 'Document registered for later enrichment.' } }, 201);
   } catch (error) {
     return handleError(error);
