@@ -7,14 +7,14 @@ export const RoleSchema = z.object({
   headcount: z.number().int().nonnegative(),
   costPerYear: z.number().nonnegative(),
   capacityHoursPerWeek: z.number().nonnegative(),
-  skills: z.array(z.string()).default([])
+  skills: z.array(z.string()).default([]),
 });
 
 export const TeamSchema = z.object({
   id: z.string(),
   name: z.string().min(1),
   parentTeamId: z.string().optional(),
-  leaderRoleId: z.string().optional()
+  leaderRoleId: z.string().optional(),
 });
 
 export const WorkflowSchema = z.object({
@@ -26,7 +26,7 @@ export const WorkflowSchema = z.object({
   requiredRoleIds: z.array(z.string()),
   toolNames: z.array(z.string()).default([]),
   automationPotential: z.number().min(0).max(1).default(0),
-  businessCriticality: z.number().min(1).max(5).default(3)
+  businessCriticality: z.number().min(1).max(5).default(3),
 });
 
 export const KpiSchema = z.object({
@@ -35,7 +35,14 @@ export const KpiSchema = z.object({
   ownerTeamId: z.string(),
   current: z.number(),
   target: z.number(),
-  unit: z.string().default('')
+  unit: z.string().default(''),
+});
+
+export const SourceDocumentSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  kind: z.string(),
+  uploadedAt: z.string(),
 });
 
 export const BusinessTwinSchema = z.object({
@@ -47,7 +54,7 @@ export const BusinessTwinSchema = z.object({
   roles: z.array(RoleSchema),
   workflows: z.array(WorkflowSchema),
   kpis: z.array(KpiSchema),
-  sourceDocuments: z.array(z.object({ id: z.string(), name: z.string(), kind: z.string(), uploadedAt: z.string() })).default([])
+  sourceDocuments: z.array(SourceDocumentSchema).default([]),
 });
 
 export type Role = z.infer<typeof RoleSchema>;
