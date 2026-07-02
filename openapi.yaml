@@ -1,0 +1,80 @@
+openapi: 3.1.0
+info:
+  title: RaeburnAI Business Twin API
+  version: 0.1.0
+paths:
+  /api/health:
+    get:
+      summary: Health check
+      responses:
+        '200': { description: OK }
+  /api/twins:
+    get:
+      summary: List business twins
+      responses:
+        '200': { description: Business twins }
+    post:
+      summary: Create business twin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string }
+      responses:
+        '201': { description: Created }
+  /api/twins/{id}:
+    get:
+      summary: Get business twin
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Business twin }
+        '404': { description: Not found }
+  /api/twins/{id}/documents:
+    post:
+      summary: Register uploaded document
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, kind, text]
+              properties:
+                name: { type: string }
+                kind: { type: string, enum: [policy, org_chart, kpi, process, other] }
+                text: { type: string }
+      responses:
+        '201': { description: Document accepted }
+  /api/twins/{id}/scenarios:
+    post:
+      summary: Run business scenario
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [question, scenario]
+              properties:
+                question: { type: string }
+                scenario: { type: object }
+      responses:
+        '200': { description: Scenario result }
