@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { audit } from '../../../../../lib/audit';
 import { requireApproval } from '../../../../../lib/approval';
+import { authenticate, requireRole } from '../../../../../lib/auth';
 import { fail, handleError, ok, parseJson } from '../../../../../lib/http';
 import { checkRateLimit, getClientKey } from '../../../../../lib/rate-limit';
 import { getTwin } from '../../../../../lib/store';
@@ -20,6 +21,11 @@ type Params = { params: Promise<{ id: string }> };
 
 export async function POST(request: Request, context: Params) {
   try {
+    const auth = authenticate(request);
+    if (!auth.ok) return auth.response;
+    const forbidden = requireRole(auth.role, 'analyst');
+    if (forbidden) return forbidden;
+
     const rate = checkRateLimit(getClientKey(request));
     if (!rate.allowed) return fail('Too many requests', 429, { retryAfterSeconds: rate.retryAfterSeconds });
 
