@@ -5,8 +5,20 @@ services:
       - "3000:3000"
     environment:
       NODE_ENV: production
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
       RAEBURN_DATA_DIR: /app/.data
+      RAEBURN_RATE_LIMIT_WINDOW_MS: 60000
+      RAEBURN_RATE_LIMIT_MAX: 120
+    read_only: true
+    tmpfs:
+      - /tmp
     volumes:
       - business-twin-data:/app/.data
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
 volumes:
   business-twin-data:
