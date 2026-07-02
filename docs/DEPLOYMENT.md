@@ -56,6 +56,8 @@ Minimum roles:
 
 `RAEBURN_STORAGE_DRIVER=json` is for local demos. Production should use `postgres` or `supabase` with `RAEBURN_DATABASE_HTTP_URL` and `RAEBURN_DATABASE_SERVICE_TOKEN`.
 
+Apply the production schema in `db/schema.sql` to Postgres or Supabase before switching the storage driver.
+
 The HTTP database adapter expects these operations:
 
 - `select_twins`
