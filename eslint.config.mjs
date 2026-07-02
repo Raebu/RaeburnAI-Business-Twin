@@ -8,14 +8,22 @@ export default [
   {
     files: ['**/*.{ts,tsx}'],
     languageOptions: {
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+        Request: 'readonly',
+        Response: 'readonly',
+        crypto: 'readonly',
+        React: 'readonly',
+      },
       parserOptions: {
         ecmaVersion: 'latest',
-        sourceType: 'module'
-      }
+        sourceType: 'module',
+      },
     },
     rules: {
       '@typescript-eslint/no-explicit-any': 'error',
-      '@typescript-eslint/no-unused-vars': ['error', { 'argsIgnorePattern': '^_' }]
-    }
-  }
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    },
+  },
 ];
