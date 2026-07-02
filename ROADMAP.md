@@ -8,18 +8,24 @@
 - Structured logging and safe error handling.
 - Health checks.
 - Audit logging and approval guard.
+- CodeQL and Dependabot configuration.
+- Baseline API auth and RBAC.
+- Postgres and Supabase storage adapter path.
+- Production database schema.
 
 ## Phase 2: Enterprise data layer
 
-- Replace JSON storage with Postgres or Supabase.
-- Add migrations and seed scripts.
+- Add a first-party database adapter package instead of the current HTTP adapter contract.
+- Add migration runner commands.
+- Add seed scripts.
 - Add object storage for uploaded documents.
 - Add backups and restore testing.
 
 ## Phase 3: Authentication and permissions
 
 - Add organisation accounts.
-- Add RBAC for owners, admins, analysts and viewers.
+- Add persistent users and memberships.
+- Add tenant-aware RBAC.
 - Add API keys for service integrations.
 - Add tenant-aware audit trails.
 
@@ -38,6 +44,6 @@
 
 ## Explicit TODOs
 
-- Add CodeQL workflow manually if the GitHub connector blocks workflow writes.
-- Add dependency review or Dependabot manually if connector safety checks block the config.
-- Implement production auth before exposing sensitive customer data.
+- Document parsing currently registers documents but does not extract structured entities.
+- Add final UI images under `docs/assets/` after dashboard design approval.
+- Replace bearer-token auth with full user login and organisation membership before multi-tenant SaaS launch.
