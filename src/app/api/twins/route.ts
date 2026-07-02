@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { audit } from '../../../lib/audit';
-import { handleError, ok, parseJson, fail } from '../../../lib/http';
+import { authenticate, requireRole } from '../../../lib/auth';
+import { fail, handleError, ok, parseJson } from '../../../lib/http';
 import { checkRateLimit, getClientKey } from '../../../lib/rate-limit';
 import { createTwin, listTwins } from '../../../lib/store';
 
@@ -14,6 +15,10 @@ function enforceRateLimit(request: Request) {
 
 export async function GET(request: Request) {
   try {
+    const auth = authenticate(request);
+    if (!auth.ok) return auth.response;
+    const forbidden = requireRole(auth.role, 'viewer');
+    if (forbidden) return forbidden;
     const limited = enforceRateLimit(request);
     if (limited) return limited;
     const twins = await listTwins();
@@ -25,6 +30,10 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const auth = authenticate(request);
+    if (!auth.ok) return auth.response;
+    const forbidden = requireRole(auth.role, 'admin');
+    if (forbidden) return forbidden;
     const limited = enforceRateLimit(request);
     if (limited) return limited;
     const body = await parseJson(request, Input);
