@@ -2,19 +2,42 @@ openapi: 3.1.0
 info:
   title: RaeburnAI Business Twin API
   version: 0.1.0
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  parameters:
+    RaeburnRole:
+      in: header
+      name: X-Raeburn-Role
+      required: false
+      schema:
+        type: string
+        enum: [viewer, analyst, admin, owner]
 paths:
   /api/health:
     get:
       summary: Health check
       responses:
-        '200': { description: OK }
+        '200':
+          description: OK
   /api/twins:
     get:
       summary: List business twins
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/RaeburnRole'
       responses:
-        '200': { description: Business twins }
+        '200':
+          description: Business twins
     post:
       summary: Create business twin
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/RaeburnRole'
       requestBody:
         required: true
         content:
@@ -23,9 +46,13 @@ paths:
               type: object
               required: [name]
               properties:
-                name: { type: string }
+                name:
+                  type: string
+                  minLength: 2
+                  maxLength: 120
       responses:
-        '201': { description: Created }
+        '201':
+          description: Created
   /api/twins/{id}:
     get:
       summary: Get business twin
@@ -33,18 +60,25 @@ paths:
         - in: path
           name: id
           required: true
-          schema: { type: string }
+          schema:
+            type: string
       responses:
-        '200': { description: Business twin }
-        '404': { description: Not found }
+        '200':
+          description: Business twin
+        '404':
+          description: Not found
   /api/twins/{id}/documents:
     post:
       summary: Register uploaded document
+      security:
+        - bearerAuth: []
       parameters:
+        - $ref: '#/components/parameters/RaeburnRole'
         - in: path
           name: id
           required: true
-          schema: { type: string }
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -53,19 +87,28 @@ paths:
               type: object
               required: [name, kind, text]
               properties:
-                name: { type: string }
-                kind: { type: string, enum: [policy, org_chart, kpi, process, other] }
-                text: { type: string }
+                name:
+                  type: string
+                kind:
+                  type: string
+                  enum: [policy, org_chart, kpi, process, other]
+                text:
+                  type: string
       responses:
-        '201': { description: Document accepted }
+        '201':
+          description: Document accepted
   /api/twins/{id}/scenarios:
     post:
       summary: Run business scenario
+      security:
+        - bearerAuth: []
       parameters:
+        - $ref: '#/components/parameters/RaeburnRole'
         - in: path
           name: id
           required: true
-          schema: { type: string }
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -74,7 +117,12 @@ paths:
               type: object
               required: [question, scenario]
               properties:
-                question: { type: string }
-                scenario: { type: object }
+                question:
+                  type: string
+                approved:
+                  type: boolean
+                scenario:
+                  type: object
       responses:
-        '200': { description: Scenario result }
+        '200':
+          description: Scenario result
